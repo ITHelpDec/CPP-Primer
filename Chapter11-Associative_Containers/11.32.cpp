@@ -8,7 +8,7 @@
 #include <vector>
 #include <iostream>
 
-// Below I have used a temporary vector to sort the values with each key before printing to std::ostream
+// Below I have used a temporary vector to sort the values within each key before printing to std::ostream
 std::ostream &print_map_sorted(std::ostream &os, const std::multimap<std::string, std::vector<std::string>> &svmap)
 {
     // iterate through keys and push to std::ostream
