@@ -5,45 +5,30 @@
  If the call is illegal, explain why:
 */
 
-/* Output:
- Using x (5) and y (10) as test variables.
-
- p: (0x10288a1a0), *p: (5), &p: (0x7ffeefbff290)
- sp: (0x102895788), *sp: (10), &sp: (0x7ffeefbff280)
- sp has 1 occurence.
-
- ptr: (0x102895788), *ptr: (10), &ptr: (0x7ffeefbff270)
- ptr has 2 occurences.
-
- p: (0x10288a1a0), *p: (5), &p: (0x7ffeefbff290)
- sp: (0x102895788), *sp: (10), &sp: (0x7ffeefbff280)
- sp has 1 occurence.
-
- ptr: (0x10288a1a0), *ptr: (5), &ptr: (0x7ffeefbff260)
- ptr has 1 occurence.
-
- p: (0x10288a1a0), *p: (0), &p: (0x7ffeefbff290)
- sp: (0x102895788), *sp: (10), &sp: (0x7ffeefbff280)
- Program ended with exit code: 0
- */
-
 #include <memory>
 #include <iostream>
 
 void process(std::shared_ptr<int> ptr)
 {
-    std::cout << "ptr: (" << ptr << "), *ptr: (" << *ptr << "), &ptr: (" << &ptr << ")" << std::endl;
+    std::cout << "\nptr: (" << ptr << "), *ptr: (" << *ptr << "), &ptr: (" << &ptr << ")" << std::endl;
     std::cout << "ptr has " << ptr.use_count() << ((ptr.use_count() == 1) ? " occurence." : " occurences.") << std::endl;
 } // ptr goes out of scope and is destroyed
 
 int main()
 {
+    int x = 5, y = 10;
+    
     // dynamically value allocate a new int (should initialise at 0)
     auto p = new int();
-    std::cout << "p: (" << p << "), *p: (" << *p << "), &p: (" << &p << ")" << std::endl;
+    *p = x;
     
     // dynamically value-allocate a smart pointer (similar outcome)
     auto sp = std::make_shared<int>();
+    *sp = y;
+    
+    std::cout << "Using x (" << x << ") and y (" << y << ") as test variables." << std::endl;
+    
+    std::cout << "\np: (" << p << "), *p: (" << *p << "), &p: (" << &p << ")" << std::endl;
     std::cout << "sp: (" << sp << "), *sp: (" << *sp << "), &sp: (" << &sp << ")" << std::endl;
     std::cout << "sp has " << sp.use_count() << ((sp.use_count() == 1) ? " occurence." : " occurences.") << std::endl;
     
@@ -51,6 +36,8 @@ int main()
     // create shared pointer of shared pointer
     // count will increase by 1, then be freed
     process(sp);
+    std::cout << "\np: (" << p << "), *p: (" << *p << "), &p: (" << &p << ")" << std::endl;
+    std::cout << "sp: (" << sp << "), *sp: (" << *sp << "), &sp: (" << &sp << ")" << std::endl;
     std::cout << "sp has " << sp.use_count() << ((sp.use_count() == 1) ? " occurence." : " occurences.") << std::endl;
     
     // (b)
@@ -64,9 +51,17 @@ int main()
     
     // (d)
     // std::shared_ptr<int>(p)
+    // legal, but not ideal
+    // std::shared_ptr<int>(p) will initialise a shared_ptr using the ordinary pointer "p"
+    // reference count increases to 1
+    // once it is pushed through process, reference count decreases to 0,
+    // which in turn frees the memory pointed to by "ptr"
+    // However, the original pointer "p" still points to this memory address
+    // p is now a dangling pointer
     process(std::shared_ptr<int>(p));
     
-    std::cout << "p: (" << p << "), *p: (" << *p << "), &p: (" << &p << ")" << std::endl;
+    std::cout << "\np: (" << p << "), *p: (" << *p << "), &p: (" << &p << ")" << std::endl;
+    std::cout << "sp: (" << sp << "), *sp: (" << *sp << "), &sp: (" << &sp << ")" << std::endl;
 
     return 0;
 }
