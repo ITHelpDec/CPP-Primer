@@ -1,5 +1,7 @@
 // Exercise 13.01:
 /*
+ What is a copy constructor? When is it used?
+
  ""The copy and move constructors define what happens when an object in initialised from another object of the same type." - pg. 496
  
  "A constructor is copy constructor if its first parameter is a reference to the class type and any additional parameters have default values." - pg. 496
