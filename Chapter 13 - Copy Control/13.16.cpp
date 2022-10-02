@@ -14,11 +14,9 @@ public:
     
     Numbered(const Numbered&) : mysn(++sn_counter) { std::cout << "N() copy" << std::endl; }
     
-    // explicit copy-assign operator declaration
-    // Numbered& operator=(const Numbered &rhs) { std::cout << "N() copy assign" << std::endl; return *this; }
+    // synthesised copy-assignment operator
     
     // synthesised destructor
-    // ~Numbered() { std::cout << "~N()" << std::endl; }
     
     static unsigned sn_counter;
     unsigned mysn;
