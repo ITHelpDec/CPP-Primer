@@ -1,3 +1,11 @@
+// Exercise 13.36:
+/*
+ Design and implement the corresponding Folder class.
+ That class should hold a set that points to the Messages in that Folder.
+ 
+ (comments added where appropriate to the exercise)
+*/
+
 #include <string>
 #include <set>
 #include <iostream>
