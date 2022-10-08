@@ -1,0 +1,19 @@
+dynamic memory and smart pointers
+in C++ dynamic memory is managed through a pair of operators new which
+allocates and optionally initialises an object in dynamic memory and returns a
+pointer to that object and delete which takes a pointer to a dynamic object
+destroys that object and frees the associated memory
+dynamic memory is problematic because it is surprisingly hard to ensure that
+we free memory at the right time either we forget to free the memory in which
+case we have a memory leak or we free the memory when there are still pointers
+referring to that memory in which case we have a pointer that refers to memory
+that is no longer valid
+to make using dynamic memory easier and safer the new library provides
+two smart pointer types that manage dynamic objects a smart pointer acts like
+a regular pointer with the important exception that it automatically deletes the
+object to which it points the new library defines two kinds of smart pointers that
+differ in how they manage their underlying pointers shared_ptr which allows
+multiple pointers to refer to the same object and unique_ptr which owns
+the object to which it points the library also defines a companion class named
+weak_ptr that is a weak reference to an object managed by a shared_ptr all
+three are defined in the memory header
