@@ -1,0 +1,3 @@
+classes generated from a lambda expression have a deleted default constructor
+deleted assignment operators and a default destructor
+whether the class has a defaulted or deleted copy move constructor depends in the usual ways on the types of the captured data members
