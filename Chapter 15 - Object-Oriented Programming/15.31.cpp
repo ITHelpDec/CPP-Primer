@@ -29,7 +29,7 @@
 //                         X
 //                        /
 //         Query      OrQuery       (s2)
-// (a) q =   X    =>    X X      WordQuery
+// (b) q =   X    =>    X X      WordQuery
 //                          \       X
 //                          X X    /
 //                        AndQuery
