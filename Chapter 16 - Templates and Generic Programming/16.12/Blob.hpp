@@ -18,7 +18,7 @@ template <typename T> class Blob {
     friend class BlobPtr<T>;
     friend class ConstBlobPtr<T>;
     
-    friend bool operator==(const Blob<T>&, const Blob<T>&);
+    friend bool operator==<T>(const Blob<T>&, const Blob<T>&);
 public:
     typedef T value_type;
     typedef typename std::vector<T>::size_type size_type;
@@ -36,11 +36,17 @@ public:
     T& front();
     T& back();
     
-    // constexpr since C++20
-    constexpr T& front() const;
-    constexpr T& back() const;
+    // constexpr suggested on cpppreference since C++20?
+    // constexpr T& front() const;
+    // constexpr T& back() const;
     
+    // changed back to const (thank you, robert)
+    const T& front() const;
+    const T& back() const;
+    
+    // const "[]" operator added (thank you, robert)
     T& operator[] (size_type i);
+    const T& operator[] (size_type i) const;
 private:
     std::shared_ptr<std::vector<T>> data;
     
@@ -71,7 +77,7 @@ template <typename T> T& Blob<T>::front()
     return data->front();
 }
 
-template <typename T> constexpr T& Blob<T>::front() const
+template <typename T> const T& Blob<T>::front() const
 { return Blob::front(); }
 
 template <typename T> T& Blob<T>::back()
@@ -80,7 +86,7 @@ template <typename T> T& Blob<T>::back()
     return data->back();
 }
 
-template <typename T> constexpr T& Blob<T>::back() const
+template <typename T> const T& Blob<T>::back() const
 { return Blob::back(); }
 
 template <typename T> T& Blob<T>::operator[] (size_type i)
@@ -88,5 +94,12 @@ template <typename T> T& Blob<T>::operator[] (size_type i)
     check(i, "subscript out of range");
     return (*data)[i];
 }
+
+template <typename T> const T& Blob<T>::operator[] (size_type i) const
+{ return Blob::operator[](i); }
+
+template <typename T>
+bool operator==(const Blob<T> &lhs, const Blob<T> &rhs)
+{ return lhs->data == rhs->data; }
 
 #endif /* Blob_hpp */
