@@ -51,4 +51,13 @@ template <typename T>
 const T& BlobPtr<T>::operator*() const
 { return BlobPtr::operator*(); }
 
+template <typename T>
+std::shared_ptr<std::vector<T>> BlobPtr<T>::check(std::size_t pos, const std::string &msg) const
+{
+    std::shared_ptr<std::vector<T>> ret = wptr.lock();
+    if (!ret) { throw std::runtime_error("unbound BlobPtr"); }
+    else if (pos > (*ret).size()) { throw std::out_of_range(msg); }
+    return ret;
+}
+
 #endif /* BlobPtr_hpp */
