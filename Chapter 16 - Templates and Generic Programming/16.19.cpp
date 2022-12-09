@@ -17,6 +17,13 @@ template <typename T> void printContainer(const T &c) {
     } std::cout << std::endl;
 }
 
+// could also do ::size_type, but then we would be restricted to random-access containers
+// template <typename T> void printContainer(const T &c) {
+//     for (template T::size_type i = 0; i != c.size(); ++i) {
+//         std::cout << c[i] << " ";
+//     } std::cout << std::endl;
+// }
+
 int main()
 {
     std::vector<int> ivec = { 0, 1, 2, 3, 4 };
