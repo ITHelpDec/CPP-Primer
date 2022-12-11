@@ -1,54 +1,42 @@
 # CPP-Primer – [![](https://tokei.ekzhang.com/b1/github/ITHelpDec/CPP-Primer?category=code&style=plastic)](https://github.com/ITHelpDec/CPP-Primer)
 My Journey Through C++ Primer 5th Edition
 
-Most recent submission – Chapter 16, Exerise 40
+.:. Most recent submission (11/12/2022) .:.
 
 ```cpp
-// Exercise 16.40:
+// Exercise 16.41:
 /*
- Is the following function legal?
- If not, why not?
- If it is legal, what, if any, are the restrictions on the argument type(s) that can be passed, and what is the return type?
+ Write a version of sum with a return type that is guaranteed to be large enough to hold the result of the addition.
 */
 
-#include <vector>
 #include <iostream>
-#include "Blob.hpp"
-#include <string>
+#include <climits>
 
-template <typename It> auto fcn3(It beg, It end) -> decltype(*beg + 0)
-{ return *beg; }
+// explicit-specified template parameter type
+// can produce undesirable behaviour
+template <typename T> auto sum(T t1, T t2)
+{ return t1 + t2; }
 
-template <typename It> auto fcn(It beg, It end) -> decltype(beg)
-{ return beg; }
+// trailing return type – can also produce undesirable behaviour
+template <typename T> auto sum2(T t1, T t2) -> decltype(t1 + t2)
+{ return t1 + t2; }
 
 int main()
 {
-    std::vector<int> ivec = { 1, 2, 3, 4, 5 };
-    Blob<std::string> sblob = { "man", "bear", "pig" };
+    // output: 4294967294 (-2 if sum<int>)
+    std::cout << sum<unsigned long long>(INT_MAX, INT_MAX) << std::endl;
+    // output: -2
+    std::cout << sum2(INT_MAX, INT_MAX) << std::endl;
     
-    // "Non-const lvalue reference to type 'int' cannot bind to a temporary of type 'decltype(* beg + 0)' (aka 'int')"
-    // auto &i = fcn3(ivec.begin(), ivec.end());
+    // output: 18446744073709551614
+    std::cout << sum<unsigned long long>(ULLONG_MAX, ULLONG_MAX) << std::endl;
+    // output: 18446744073709551614
+    std::cout << sum2(ULLONG_MAX, ULLONG_MAX) << std::endl;
     
-    // without the reference operator, the code with run
-    auto i3 = fcn3(ivec.begin(), ivec.end());
-    
-    // the above amendment will not work for our custom Blob<T> class
-    // auto s3 = fcn3(sblob.begin(), sblob.end());
-    
-    // the following code was used to build begin() and end() members in "Blob.hpp"
-    // typename std::vector<T>::iterator begin() { return data->begin(); }
-    // typename std::vector<T>::iterator end() { return data->end(); }
-    
-    std::cout << "i3: " << i3 << std::endl;
-    
-    // instead, we could call something like fcn() from the earlier exercises...
-    // ...using iterators and dereferencing the elements
-    auto i = fcn(ivec.begin(), ivec.end());
-    auto s = fcn(sblob.begin(), sblob.end());
-    
-    std::cout << "i: " << *i << std::endl;
-    std::cout << "s: " << *s << std::endl;
+    // output: 18446744073709551612
+    std::cout << sum<unsigned long long>(-2, -2) << std::endl;
+    // output: -4
+    std::cout << sum2(-2, -2) << std::endl;
     
     return 0;
 }
