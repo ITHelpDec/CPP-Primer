@@ -4,14 +4,20 @@ My Journey Through C++ Primer 5th Edition
 .:. Most recent submission (11/12/2022) .:.
 
 ```cpp
-// Exercise 16.43:
+// Exercise 16.44:
 /*
- Using the function defined in the previous exercise, what would the template parameter of g be if we called g(i = ci)?
+ Using the same three calls as in the first exercise, determine the types for T if g’s function parameter is declared as T (not T&&).
+ What if g’s function parameter is const T&?
 */
 
 #include <iostream>
 
-template <typename T> void g(T&& val) {
+template <typename T> void g1(T val) {
+    std::cout << val << std::endl;
+}
+
+// like in page 687
+template <typename T> void g2(const T &val) {
     std::cout << val << std::endl;
 }
 
@@ -21,28 +27,35 @@ int main()
     const int ci = 3;
     
     // (a)
-    // argument is an lvalue; template parameter T is deduced as int&
-    // val == int& && == int&
-    std::cout << "(a): "; g(i);
+    // argument is an lvalue; template parameter T is deduced as int
+    // "val" is a copy of "i" (int)
+    std::cout << "(a): "; g1(i);
     
     // (b)
-    // argument is an lvalue; template parameter T is deduced as const int&
-    // val == const int& && == const int&
-    std::cout << "(b): "; g(ci);
+    // argument is an lvalue; template parameter T is deduced as int (const is ignored)
+    // val is an int copy of "ci"
+    std::cout << "(b): "; g1(ci);
     
     // (c)
     // argument is an rvalue; template parameter T is deduced as int
-    // val == int&& && == int&&
-    std::cout << "(c): "; g(i * ci);
+    // val is a new int of the product of i and ci
+    std::cout << "(c): "; g1(i * ci);
     
     // (d)
-    // argument is an lvalue REFERRING to the object integer "i"
-    // template parameter T is deduced as int &val -> int& &&
-    // val = int& && = int&
-    // any change
-    std::cout << "(d): "; g(i = ci);
+    // argument is an lvalue; template parameter T is deduced as int
+    // val == const int&
+    std::cout << "(d): "; g2(i);
+    
+    // (e)
+    // argument is an lvalue; template parameter T is deduced as int
+    // val == const int&
+    std::cout << "(e): "; g2(ci);
+    
+    // (f)
+    // argument is an rvalue; template parameter T is deduced as int
+    // val == const int&
+    std::cout << "(f): "; g2(i * ci);
     
     return 0;
 }
-
 ```
