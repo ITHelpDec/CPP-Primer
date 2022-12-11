@@ -4,9 +4,9 @@ My Journey Through C++ Primer 5th Edition
 .:. Most recent submission (11/12/2022) .:.
 
 ```cpp
-// Exercise 16.42:
+// Exercise 16.43:
 /*
- Determine the type of T and of val in each of the following calls:
+ Using the function defined in the previous exercise, what would the template parameter of g be if we called g(i = ci)?
 */
 
 #include <iostream>
@@ -35,6 +35,14 @@ int main()
     // val == int&& && == int&&
     std::cout << "(c): "; g(i * ci);
     
+    // (d)
+    // argument is an lvalue REFERRING to the object integer "i"
+    // template parameter T is deduced as int &val -> int& &&
+    // val = int& && = int&
+    // any change
+    std::cout << "(d): "; g(i = ci);
+    
     return 0;
 }
+
 ```
