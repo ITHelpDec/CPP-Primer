@@ -4,40 +4,47 @@ My Journey Through C++ Primer 5th Edition
 .:. Most recent submission (11/12/2022) .:.
 
 ```cpp
-// Exercise 16.45:
+// Exercise 16.47:
 /*
- Given the following template, explain what happens if we call g on a literal value such as 42.
- What if we call g on a variable of type int?
+ Write your own version of the flip function and test it by calling functions that have lvalue and rvalue reference parameters.
 */
 
-#include <vector>
 #include <iostream>
+#include <utility>
 
-template <typename T> void printVec(const std::vector<T> &tvec) {
-    for (const auto &t : tvec) {
-        std::cout << t << " ";
-    } std::cout << std::endl;
+void f(int v1, int &v2) {
+    std::cout << v1 << " " << ++v2 << std::endl;
 }
 
-template <typename T> void g(T&& val) {
-    std::vector<T> v(3, val);
-    printVec(v);
+void g(int &&v1, int &v2) {
+    std::cout << v1 << " " << v2 << std::endl;
+}
+
+template <typename F, typename T1, typename T2> void flip1(F f, T1 t1, T2 t2) {
+    f(t2, t1);
+}
+
+template <typename F, typename T1, typename T2> void flip2(F f, T1 &&t1, T2 &&t2) {
+    f(t2,t1);
+}
+
+template <typename F, typename T1, typename T2> void flip3(F f, T1 &&t1, T2 &&t2) {
+    f(std::forward<T2>(t2), std::forward<T1>(t1));
 }
 
 int main()
 {
-    // argument is an rvalue; T is deduced as int&&
-    // val == int&& && == int&&
-    // std::vector<T> will become std::vector<int>
-    // std::vector<int> is LEGAL
-    g(42);
+    int i = 3, j = 5;
     
-    int i = 3;
-    // g(i);
-    // argument is an lvalue; T is deduced as int&
-    // val == int& && == int&
-    // std::vector<T> -> std::vector<int&>
-    // std::vector<int&> is NOT LEGAL
+    f(42, i);
+    flip1(f, j, 42);
+    flip2(f, j, 42);
+    flip3(f, j, 42);
+    
+    g(42, i);
+    // flip1(g, j, 42); // error: can't initialise T&& from lvalue
+    // flip2(g, j, 42); // error: can't initialise T&& from lvalue
+    flip3(g, j, 42);
     
     return 0;
 }
