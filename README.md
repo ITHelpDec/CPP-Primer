@@ -45,4 +45,5 @@ output:
 (f) f(T)
 (g) f(T)
 (h) f(const T*)
-Program ended with exit code: 0```
+Program ended with exit code: 0
+```
