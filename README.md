@@ -1,51 +1,89 @@
 # C++ Primer – [![](https://tokei.ekzhang.com/b1/github/ITHelpDec/CPP-Primer?category=code&style=plastic)](https://github.com/ITHelpDec/CPP-Primer)
 My Journey Through C++ Primer 5th Edition
 
-.:. Most recent submission (12/12/2022) .:.
+.:. Most recent submission (13/12/2022) .:.
 
 ```cpp
-// Exercise 16.47:
+// Exercise 16.48:
 /*
- Write your own version of the flip function and test it by calling functions that have lvalue and rvalue reference parameters.
+ Write your own versions of the debug_rep functions.
 */
 
+#include <string>
+#include <sstream>
 #include <iostream>
-#include <utility>
 
-void f(int v1, int &v2) {
-    std::cout << v1 << " " << ++v2 << std::endl;
+template <typename T> std::string debug_rep(const T &t) {
+    std::cout << "debug_rep(const T &t) called" << std::endl;
+    std::ostringstream ret;
+    ret << t;
+    return ret.str();
 }
 
-void g(int &&v1, int &v2) {
-    std::cout << v1 << " " << v2 << std::endl;
+template <typename T> std::string debug_rep(T *p) {
+    std::cout << "debug_rep(T *p) called" << std::endl;
+    
+    std::ostringstream ret;
+    ret << "pointer: " << p;
+    
+    if (p) { ret << " (" << debug_rep(*p) <<")"; }
+    else { ret << " (null pointer)"; }
+    
+    return ret.str();
 }
 
-template <typename F, typename T1, typename T2> void flip1(F f, T1 t1, T2 t2) {
-    f(t2, t1);
+std::string debug_rep(const std::string &s) {
+    std::cout << "debug_rep(const std::string &s) called" << std::endl;
+    return '"' + s + '"';
 }
 
-template <typename F, typename T1, typename T2> void flip2(F f, T1 &&t1, T2 &&t2) {
-    f(t2,t1);
+std::string debug_rep(char *p) {
+    std::cout << "debug_rep(char *p) called" << std::endl;
+    return debug_rep(std::string(p));
 }
-
-template <typename F, typename T1, typename T2> void flip3(F f, T1 &&t1, T2 &&t2) {
-    f(std::forward<T2>(t2), std::forward<T1>(t1));
+                     
+std::string debug_rep(const char *p) {
+    std::cout << "debug_rep(const char *p) called" << std::endl;
+    return debug_rep(std::string(p));
 }
 
 int main()
 {
-    int i = 3, j = 5;
+    std::string s1 = "manbearpig";
+    std::cout << debug_rep(s1) << std::endl << std::endl;
+    std::cout << debug_rep(&s1) << std::endl << std::endl;
     
-    f(42, i);
-    flip1(f, j, 42);
-    flip2(f, j, 42);
-    flip3(f, j, 42);
+    const std::string *s2 = &s1;
+    std::cout << debug_rep(s2) << std::endl << std::endl;
     
-    g(42, i);
-    // flip1(g, j, 42); // error: can't initialise T&& from lvalue
-    // flip2(g, j, 42); // error: can't initialise T&& from lvalue
-    flip3(g, j, 42);
+    const std::string *s3 = nullptr;
+    std::cout << debug_rep(s3) << std::endl << std::endl;
     
+    const char *str = "c-style string";
+    std::cout << debug_rep(str) << std::endl << std::endl;
+
     return 0;
 }
+```
+```
+output:
+debug_rep(const std::string &s) called
+"manbearpig"
+
+debug_rep(T *p) called
+debug_rep(const T &t) called
+pointer: 0x7ff7bfeff1a8 (manbearpig)
+
+debug_rep(T *p) called
+debug_rep(const T &t) called
+pointer: 0x7ff7bfeff1a8 (manbearpig)
+
+debug_rep(T *p) called
+pointer: 0x0 (null pointer)
+
+debug_rep(const char *p) called
+debug_rep(const std::string &s) called
+"c-style string"
+
+Program ended with exit code: 0
 ```
