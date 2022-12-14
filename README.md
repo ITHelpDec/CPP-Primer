@@ -4,17 +4,19 @@ My Journey Through C++ Primer 5th Edition
 .:. Most recent submission (14/12/2022) .:.
 
 ```cpp
-// Exercise 16.49:
+// Exercise 16.50:
 /*
- Explain what happens in each of the following calls:
+ Define the functions from the previous exercise so that they print an identifying message.
+ Run the code from that exercise.
+ If the calls behave differently from what you expected, make sure you understand why.
 */
 
 #include <iostream>
 
-template <typename T> void f(T);// { std::cout << "f(T)" << std::endl; }
-template <typename T> void f(const T*);// { std::cout << "f(const T*)" << std::endl; }
-template <typename T> void g(T);// { std::cout << "g(T)" << std::endl; }
-template <typename T> void g(T*);// { std::cout << "g(T*)" << std::endl; }
+template <typename T> void f(T) { std::cout << "f(T)" << std::endl; }
+template <typename T> void f(const T*) { std::cout << "f(const T*)" << std::endl; }
+template <typename T> void g(T) { std::cout << "g(T)" << std::endl; }
+template <typename T> void g(T*) { std::cout << "g(T*)" << std::endl; }
 
 int main()
 {
