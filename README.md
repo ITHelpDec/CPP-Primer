@@ -4,73 +4,48 @@ My Journey Through C++ Primer 5th Edition
 .:. Most recent submission (16/12/2022) .:.
 
 ```cpp
-// Exercise 16.52:
+// Exercise 16.53:
 /*
- Write a program to check your answer to the previous question.
+ Write your own version of the print functions and test them by printing one, two, and five arguments, each of which should have different types.
 */
 
 #include <iostream>
 #include <string>
 
-template <typename T, typename ...Args> void foo(const T &t, const Args& ...rest) {
-    std::cout << "This is a variadic template with " << sizeof...(Args)
-    << " template " << (sizeof...(Args) == 1 ? "argument" : "arguments")
-    << " and " << sizeof...(rest) << " function "
-    << (sizeof...(rest) == 1 ? "argument." : "arguments.") << std::endl;
-    
+template <typename T> std::ostream& print(std::ostream &os, const T &t) {
+    return os << t;
+}
+
+template <typename T, typename ...Args>
+std::ostream& print(std::ostream &os, const T &t, const Args& ...rest) {
+    os << t << " ";
+    return print(os, rest...);
 }
 
 int main()
 {
-    int i = 0;
+    int i = 1;
     double d = 3.14;
     std::string s = "manbearpig";
     
-    // void foo(const int&, const std::string&, const int&, const double&);
-    //
-    // sizeof...(Args)  == 3;   sizeof...(rest) == 3
-    // total types      == 3;   total arguments == 4
-    std::cout << "foo(i, s, 42, d)" << std::endl;
-    foo(i, s, 42, d);
+    std::cout << "print(1 arg):  ";
+    print(std::cout, 42);
+    std::cout << std::endl;
     
-    // void foo(const std::string&, const int&, const char(&)[3]);
-    // { 'h', 'i', '\0' }
-    //
-    // sizeof...(Args)  == 2;   sizeof...(rest) == 2
-    // total types      == 3;   total arguments == 3
-    std::cout << "\nfoo(s, 42, \"hi\")" << std::endl;
-    foo(s, 42, "hi");
+    std::cout << "print(2 args): ";
+    print(std::cout, "hi", d);
+    std::cout << std::endl;
     
-    // void foo(const double&, const std::string&);
-    //
-    // sizeof...(Args)  == 1;   sizeof...(rest) == 1
-    // total types      == 2;   total arguments == 2
-    std::cout << "\nfoo(d, s)" << std::endl;
-    foo(d, s);
-    
-    // void foo(const char(&)[3]);
-    // { 'h', 'i', '\0' }
-    //
-    // sizeof...(Args)  == 0;   sizeof...(rest) == 0
-    // total types      == 1;   total arguments == 1
-    std::cout << "\nfoo(\"hi\")" << std::endl;
-    foo("hi");
+    std::cout << "print(5 args): ";
+    print(std::cout, i, d, s, 2, "halfmanhalfbearhalfpig");
+    std::cout << std::endl;
     
     return 0;
 }
 ```
 ```
-output:
-foo(i, s, 42, d)
-This is a variadic template with 3 template arguments and 3 function arguments.
-
-foo(s, 42, "hi")
-This is a variadic template with 2 template arguments and 2 function arguments.
-
-foo(d, s)
-This is a variadic template with 1 template argument and 1 function argument.
-
-foo("hi")
-This is a variadic template with 0 template arguments and 0 function arguments.
+print(1 arg):  42
+print(2 args): hi 3.14
+print(5 args): 1 3.14 manbearpig 2 halfmanhalfbearhalfpig
 Program ended with exit code: 0
 ```
