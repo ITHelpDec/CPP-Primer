@@ -12,7 +12,8 @@ My Journey Through C++ Primer 5th Edition
 #include <iostream>
 #include <string>
 
-template <typename T, typename ...Args> void foo(const T &t, const Args& ...rest) { std::cout << "This is a variadic template with " << sizeof...(Args)
+template <typename T, typename ...Args> void foo(const T &t, const Args& ...rest) {
+    std::cout << "This is a variadic template with " << sizeof...(Args)
     << " template " << (sizeof...(Args) == 1 ? "argument" : "arguments")
     << " and " << sizeof...(rest) << " function "
     << (sizeof...(rest) == 1 ? "argument." : "arguments.") << std::endl;
