@@ -4,59 +4,57 @@ My Journey Through C++ Primer 5th Edition
 .:. Most recent submission (17/12/2022) .:.
 
 ```cpp
-// Exercise 16.56:
+// Exercise 16.58:
 /*
- Write and test a variadic version of errorMsg.
+ Write the emplace_back function for your StrVec class and for the Vec class that you wrote for the exercises in § 16.1.2 (p. 668).
 */
 
+#include "StrVec.hpp"
+#include "Vec.h"
 #include <iostream>
-#include <string>
-#include <sstream>
 
-template <typename T> std::string debug_rep(const T &t) {
-    std::ostringstream ret;
-    ret << t;
-    return ret.str();
-}
-
-template <typename T> std::string debug_rep(T* p) {
-    std::ostringstream ret;
-    ret << "pointer: " << p;
+void testStrVec(StrVec &svec) {
+    svec.emplace_back("manbearpig");
     
-    ret << " " << (p ? "(" + debug_rep(*p) + ")" : "null pointer" ) << "\n";
-    return ret.str();
+    std::string s1 = "half";
+    std::string s2 = "man";
+    
+    svec.emplace_back(10, 'c');
+    
+    svec.emplace_back(s1 + " " + s2);
 }
 
-std::string debug_rep(const std::string &s) { return '"' + s + '"'; }
-
-std::string debug_rep(char *c) { return debug_rep(std::string(c)); }
-
-std::string debug_rep(const char *c) { return debug_rep(std::string(c)); }
-
-template <typename T>
-std::ostream& print(std::ostream &os, const T &t) { return os << t << " "; }
-
-template <typename T, typename ...Args>
-std::ostream& print(std::ostream &os, const T &t, const Args &...rest) {
-    os << t << " ";
-    return print(std::cout, rest...);
-}
-
-template <typename ...Args>
-std::ostream& errorMsg(std::ostream &os, const Args &...rest)
-{
-    return print(os, debug_rep(rest)...);
+template <typename T> void testVec(Vec<T> &tvec) {
+    tvec.emplace_back(0);
+    
+    int i = 1;
+    
+    tvec.emplace_back(i);
+    
+    tvec.emplace_back(i + i);
 }
 
 int main()
 {
-    errorMsg(std::cout, 404, "page not found") << std::endl;
+    StrVec svec;
+    testStrVec(svec);
+    printVec(svec);
+
+    std::cout << std::endl;
+    
+    Vec<int> ivec;
+    testVec(ivec);
+    printVec(ivec);
     
     return 0;
 }
 ```
 ```
 output:
-404 "page not found" 
+Printing vector...
+"manbearpig" "cccccccccc" "half man" 
+
+Printing vector...
+"0" "1" "2" 
 Program ended with exit code: 0
 ```
