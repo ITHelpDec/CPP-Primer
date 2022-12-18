@@ -56,3 +56,10 @@ int main()
     
     return 0;
 }
+
+// output:
+// std::vector<int>: 4 appears 2 times.
+// std::vector<double>: 3.14 appears 3 times.
+// std::vector<std::string>: half appears 3 times.
+// std::vector<const char*>: half appears 3 times.
+// Program ended with exit code: 0
