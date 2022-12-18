@@ -1,4 +1,4 @@
-// Exercise 16.65:
+// Exercise 16.66:
 /*
  What are the advantages and disadvantages of overloading these debug_rep functions as compared to defining specializations?
 */
