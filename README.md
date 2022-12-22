@@ -43,19 +43,20 @@ class Sales_data {
 public:
     // default constructors
     Sales_data() = default;
+    Sales_data(const std::string &s) : bookNo(s) { }
     Sales_data(const std::string &bn, const std::size_t &us, const double &r)
-    : bookNo(bn), units_sold(us), revenue(r) { }
+        : bookNo(bn), units_sold(us), revenue(r) { }
     Sales_data(std::string &&bn, std::size_t &&us, double &&r)
-    : bookNo(std::move(bn)), units_sold(std::move(us)), revenue(std::move(r)) { }
+        : bookNo(std::move(bn)), units_sold(std::move(us)), revenue(std::move(r)) { }
     
     // copy and copy-assignment
     Sales_data(const Sales_data &sd)
-    : bookNo(sd.bookNo), units_sold(sd.units_sold), revenue(sd.revenue) { }
+        : bookNo(sd.bookNo), units_sold(sd.units_sold), revenue(sd.revenue) { }
     Sales_data& operator=(const Sales_data&);
     
     // move and move-assignment
     Sales_data(Sales_data &&sd) noexcept
-    : bookNo(std::move(sd.bookNo)), units_sold(std::exchange(sd.units_sold, 0)), revenue(std::exchange(sd.revenue, 0)) { }
+        : bookNo(std::move(sd.bookNo)), units_sold(std::exchange(sd.units_sold, 0)), revenue(std::exchange(sd.revenue, 0)) { }
     Sales_data& operator=(Sales_data&&) noexcept;
     
     Sales_data& operator+=(const Sales_data&);
@@ -64,7 +65,7 @@ public:
     explicit operator std::string() const   { return bookNo; }
     explicit operator double() const        { return revenue; }
     
-    std::string isbn()          { return bookNo; }
+    std::string isbn() const    { return bookNo; }
     double avg_price() const    { return revenue / units_sold; }
     
     void swap(Sales_data&, Sales_data&);
