@@ -15,6 +15,7 @@
 #include <set>
 #include <iostream>
 #include <sstream>
+#include <tuple>
 
 // forward declaration and class body removed
 // class QueryResult;
