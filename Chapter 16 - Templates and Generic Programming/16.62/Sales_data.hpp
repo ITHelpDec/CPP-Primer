@@ -1,4 +1,4 @@
-// Exercise 16.61:
+// Exercise 16.62:
 /*
  Define your own version of hash<Sales_data> and define an unordered_multiset of Sales_data objects.
  Put several transactions into the container and print its contents.
@@ -37,6 +37,7 @@ class Sales_data {
 public:
     // default constructors
     Sales_data() = default;
+    Sales_data(const std::string &s) : bookNo(s) { }
     Sales_data(const std::string &bn, const std::size_t &us, const double &r) : bookNo(bn), units_sold(us), revenue(r) { }
     Sales_data(std::string &&bn, std::size_t &&us, double &&r) : bookNo(std::move(bn)), units_sold(std::move(us)), revenue(std::move(r)) { }
     
