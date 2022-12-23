@@ -3,7 +3,7 @@
  Write and test your own version of the findBook function.
 */
 
-// from exercise 16.61
+// from exercise 16.62
 #include "Sales_data.hpp"
 
 #include <vector>
