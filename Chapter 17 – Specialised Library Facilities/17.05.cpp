@@ -1,4 +1,4 @@
-// Exercise 17.04:
+// Exercise 17.05:
 /*
  Rewrite findBook to return a pair that holds an index and a pair of iterators.
  
