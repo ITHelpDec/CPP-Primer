@@ -27,10 +27,16 @@ template <std::size_t N> struct Quiz {
     int answerToQuestion(int n)      { return quiz[n - 1]; }
 };
 
+// added printResults() template function to tidy main() function
+template <std::size_t N> void printResults(const Quiz<N> &candidate) {
+    for (int i = 0; i != candidate.quiz.size(); ++i) {
+        std::cout << i + 1 << ": " << (candidate.quiz[i] ? "True" : "False") << std::endl;;
+    } std::cout << std::endl;
+}
+
 int main()
 {
-    constexpr std::size_t sz = 10;
-    Quiz<sz> candidate1;
+    Quiz<10> candidate1;
     
     candidate1.markAsTrue_Question(10);
     std::cout << "Setting question 10 to \"True\"...\n";
@@ -45,7 +51,9 @@ int main()
     
     // another way to view answers using for loop
     std::cout << "Candidate 1's answers: " << std::endl;
-    for (int i = 0; i != candidate1.quiz.size(); ++i) {
-        std::cout << i + 1 << ": " << (candidate1.quiz[i] ? "True" : "False") << std::endl;;
-    } std::cout << std::endl;
+    printResults(candidate1);
+    
+    Quiz<100> candidate2;
+    std::cout << "Candidate 2's answers: " << std::endl;
+    printResults(candidate2);
 }
