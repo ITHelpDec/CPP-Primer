@@ -7,6 +7,9 @@
  Sales_data(const std::string &s) : bookNo(s) { }
  
  >> The programme still runs as it did previously.
+ 
+ >> Also, bear in mind std::accumulate(It, It, starting_value)'s third variable is its starting value, ..
+ >> ...so as long as htat is 0, the programme will run as intended.
 */
 
 // from exercise 16.62
