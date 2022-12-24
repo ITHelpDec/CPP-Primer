@@ -31,11 +31,11 @@ int main()
     std::regex r("[^c]ei[^r]");
     
     std::string s;
-    std::smatch results;
+    // std::smatch results;
     
     while (std::cin >> s && s != "q") {
-        
-        if (std::regex_search(s, results, r))
+        // if (std::regex_search(s, results, r))
+        if (std::regex_match(s, r))
             std::cout << "\"" << s << "\" fails the test! ";
         else
             std::cout << "\"" << s << "\" passes the test! ";
