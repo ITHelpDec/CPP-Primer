@@ -22,15 +22,19 @@ int main()
     std::string pattern1 = "[^c]ei[^r]";
     std::string pattern2 = "cie";
     
-    std::regex r1("[[:alpha:]]*" + pattern1 + "[[:alpha:]]*");
-    std::regex r2("[[:alpha:]]*" + pattern2 + "[[:alpha:]]*");
+    // forgot to add std::regex::icase
+    std::regex r1("[[:alpha:]]*" + pattern1 + "[[:alpha:]]*", std::regex::icase);
+    std::regex r2("[[:alpha:]]*" + pattern2 + "[[:alpha:]]*", std::regex::icase);
     
     std::string s;
-    std::smatch results;
+ 
+    // no need for "result" std::smatch
+    // std::smatch results;
     
     while (std::cin >> s && s != "q") {
-        
-        if (std::regex_search(s, results, r1) || std::regex_search(s, results, r2))
+        // match, instead of search
+        // if (std::regex_search(s, results, r1) || std::regex_search(s, results, r2))
+        if (std::regex_match(s, r1) || std::regex_match(s, r2))
             std::cout << "\"" << s << "\" fails the test! ";
         else
             std::cout << "\"" << s << "\" passes the test! ";
