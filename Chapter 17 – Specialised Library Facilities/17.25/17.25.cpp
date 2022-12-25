@@ -33,13 +33,12 @@ int main()
         std::istringstream record(line);
         record >> person.name;
         
-        std::string numbers;
-        while (record >> numbers) { numbers += numbers; }
+        std::string numbers, substr;
+        while (record >> substr) { numbers += substr + " "; }
         
-        std::smatch results;
         std::string fmt = "$2.$5.$7";
-        if (std::regex_search(numbers, results, r))
-            person.phones.push_back(std::regex_replace(results.str(), r, fmt));
+        for (std::sregex_iterator it(numbers.begin(), numbers.end(), r), end_it; it != end_it; ++it)
+            person.phones.push_back(std::regex_replace(it->str(), r, fmt));
         
         people.push_back(person);
     }
@@ -48,8 +47,8 @@ int main()
     
     for (const auto &person : people) {
         output << person.name << " ";
-        for (const auto &number : person.phones)
-            output << number << std::endl;
+        if (!person.phones.empty())
+            output << person.phones[0] << std::endl;
     }
     
     output.close();
