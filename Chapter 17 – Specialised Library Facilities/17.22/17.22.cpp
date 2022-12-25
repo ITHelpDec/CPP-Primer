@@ -14,7 +14,7 @@ int main()
     std::ifstream file("phones");
     
     if (!file.is_open()) {
-        std::cerr << "Unable to open file.\n" << std::endl;
+        std::cerr << "Unable to open file.\n" << std::endl; return -1;
     } std::cout << "File opened successfully.\n" << std::endl;
     
     // \d – digits
@@ -39,7 +39,7 @@ int main()
     file.close();
     
     if (file.is_open()) {
-        std::cerr << "\nUnable to close file." << std::endl;
+        std::cerr << "\nUnable to close file." << std::endl; return -1;
     } std::cout << "\nFile close successfully." << std::endl;
     
     return 0;
