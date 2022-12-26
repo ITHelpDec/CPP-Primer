@@ -68,13 +68,13 @@ int main()
     
     char ch;
     
-    std::cout << "\n>>> std::noskipws <<<\n";
+    std::cout << "\n>>> std::skipws <<<\n";
     while (file >> ch) { std::cout << ch; } std::cout << std::endl;
     
     // clear flags (including eofbit), then return to beginning of file
     file.clear(); file.seekg(0);
     
-    std::cout << "\n>>> std::skipws <<<\n";
+    std::cout << "\n>>> std::noskipws <<<\n";
     while (file >> std::noskipws >> ch) { std::cout << ch; } std::cout << std::endl;
     
     file.close();
