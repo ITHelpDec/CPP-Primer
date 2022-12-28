@@ -1,13 +1,20 @@
 # C++ Primer – [![](https://tokei.ekzhang.com/b1/github/ITHelpDec/CPP-Primer?category=code&style=plastic)](https://github.com/ITHelpDec/CPP-Primer)
 My Journey Through C++ Primer 5th Edition
 
-.:. Most Noteworthy Recent Submission (17/12/2022) .:.
+.:. Most Noteworthy Recent Submission (28/12/2022) .:.
 
 ```cpp
-// Exercise 16.62:
+// Exercise 18.10:
 /*
- Define your own version of hash<Sales_data> and define an unordered_multiset of Sales_data objects.
- Put several transactions into the container and print its contents.
+ Write a program that uses the Sales_data addition operator on objects that have differing ISBNs.
+ Write two versions of the program: one that handles the exception and one that does not.
+ Compare the behavior of the programs so that you become familiar with what happens when an uncaught exception occurs.
+ 
+ >> line 89:  out_of_stock
+ >> line 96:  isbn_mismatch
+ >> line 118: opeartor+=
+ >> line 130: opeartor-=
+ 
 */
 
 #ifndef Sales_data_hpp
@@ -17,6 +24,11 @@ My Journey Through C++ Primer 5th Edition
 #include <string>
 #include <functional>
 #include <unordered_set>
+#include <stdexcept>
+
+// forward declarations
+class out_of_stock;
+class isbn_mismatch;
 
 class Sales_data {
     friend std::istream& operator>>(std::istream&, Sales_data&);
@@ -30,18 +42,14 @@ class Sales_data {
     friend bool operator<=(const Sales_data&, const Sales_data&);
     friend bool operator>=(const Sales_data&, const Sales_data&);
     
-    // equality operators needed for hash function
     friend bool operator==(const Sales_data&, const Sales_data&);
     friend bool operator!=(const Sales_data&, const Sales_data&);
     
-    // std::hash declared as friend in order to access private members
     friend std::hash<Sales_data>;
     
-    // friend function to print contents of multiset
     friend void printSet(const std::unordered_multiset<Sales_data>&);
     
 public:
-    // default constructors
     Sales_data() = default;
     Sales_data(const std::string &s) : bookNo(s) { }
     Sales_data(const std::string &bn, const std::size_t &us, const double &r)
@@ -49,14 +57,16 @@ public:
     Sales_data(std::string &&bn, std::size_t &&us, double &&r)
         : bookNo(std::move(bn)), units_sold(std::move(us)), revenue(std::move(r)) { }
     
-    // copy and copy-assignment
     Sales_data(const Sales_data &sd)
         : bookNo(sd.bookNo), units_sold(sd.units_sold), revenue(sd.revenue) { }
+    
     Sales_data& operator=(const Sales_data&);
     
-    // move and move-assignment
     Sales_data(Sales_data &&sd) noexcept
-        : bookNo(std::move(sd.bookNo)), units_sold(std::exchange(sd.units_sold, 0)), revenue(std::exchange(sd.revenue, 0)) { }
+        : bookNo(std::move(sd.bookNo)),
+          units_sold(std::exchange(sd.units_sold, 0)),
+          revenue(std::exchange(sd.revenue, 0)) { }
+    
     Sales_data& operator=(Sales_data&&) noexcept;
     
     Sales_data& operator+=(const Sales_data&);
@@ -76,6 +86,21 @@ private:
     double revenue = 0.0;
 };
 
+class out_of_stock : public std::runtime_error {
+public:
+    explicit out_of_stock(const std::string &s) : std::runtime_error(s) {  }
+};
+
+class isbn_mismatch : public std::logic_error {
+public:
+    explicit isbn_mismatch(const std::string &s) : std::logic_error(s) { }
+    
+    isbn_mismatch(const std::string &s, const std::string &lhs, const std::string &rhs)
+        : std::logic_error(s), left_(lhs), right_(rhs) { }
+    
+    const std::string left_, right_;
+};
+
 inline std::istream& operator>>(std::istream &is, Sales_data &in)
 {
     double price = 0;
@@ -92,53 +117,62 @@ inline std::ostream& operator<<(std::ostream &os, const Sales_data &out)
 
 inline Sales_data operator+(const Sales_data &lhs, const Sales_data &rhs)
 {
-    Sales_data sum;
-    sum.units_sold = lhs.units_sold + rhs.units_sold;
-    sum.revenue = lhs.revenue + rhs.revenue;
-    return sum;
+    // Sales_data sum;
+    // sum.units_sold = lhs.units_sold + rhs.units_sold;
+    // sum.revenue = lhs.revenue + rhs.revenue;
+    // return sum;
+    
+    Sales_data temp = lhs;
+    temp += rhs;
+    return temp;
 }
 
 inline Sales_data operator-(const Sales_data &lhs, const Sales_data &rhs)
 {
-    Sales_data sum;
-    sum.units_sold = lhs.units_sold - rhs.units_sold;
-    sum.revenue = lhs.revenue - rhs.revenue;
-    return sum;
+    // Sales_data sum;
+    // sum.units_sold = lhs.units_sold - rhs.units_sold;
+    // sum.revenue = lhs.revenue - rhs.revenue;
+    // return sum;
+    
+    Sales_data temp = lhs;
+    temp -= rhs;
+    return temp;
 }
 
-inline bool operator==(const Sales_data &sd1, const Sales_data &sd2) 
+inline bool operator==(const Sales_data &lhs, const Sales_data &rhs)
 {
-    return (sd1.bookNo == sd2.bookNo &&
-    sd1.units_sold == sd2.units_sold &&
-    sd1.revenue == sd2.revenue);
+    return lhs.bookNo == rhs.bookNo &&
+           lhs.units_sold == rhs.units_sold &&
+           lhs.revenue == rhs.revenue;
 }
 
-inline bool operator!=(const Sales_data &sd1, const Sales_data &sd2) 
+inline bool operator!=(const Sales_data &lhs, const Sales_data &sd2)
 {
-    return !(sd1 == sd2);
+    return !(lhs == sd2);
 }
 
-inline bool operator<(const Sales_data &lhs, const Sales_data &rhs) 
+inline bool operator<(const Sales_data &lhs, const Sales_data &rhs)
 {
     return lhs.avg_price() < rhs.avg_price();
 }
 
-inline bool operator>(const Sales_data &lhs, const Sales_data &rhs) 
+inline bool operator>(const Sales_data &lhs, const Sales_data &rhs)
 {
     return rhs < lhs;
 }
 
-inline bool operator<=(const Sales_data &lhs, const Sales_data &rhs) 
+inline bool operator<=(const Sales_data &lhs, const Sales_data &rhs)
 {
     return !(rhs < lhs);
 }
 
-inline bool operator>=(const Sales_data &lhs, const Sales_data &rhs) 
+inline bool operator>=(const Sales_data &lhs, const Sales_data &rhs)
 {
     return !(lhs < rhs);
 }
 
-inline void Sales_data::swap(Sales_data &lhs, Sales_data &rhs) {
+inline void Sales_data::swap(Sales_data &lhs, Sales_data &rhs)
+{
     using std::swap;
     swap(lhs.bookNo, rhs.bookNo);
     swap(lhs.units_sold, rhs.units_sold);
@@ -165,6 +199,8 @@ inline Sales_data& Sales_data::operator=(Sales_data &&rhs) noexcept
 
 inline Sales_data& Sales_data::operator+=(const Sales_data &rhs)
 {
+    if (bookNo != rhs.bookNo)
+        throw isbn_mismatch("wrong isbns", bookNo, rhs.bookNo);
     Sales_data lhs_copy = *this;
     *this = lhs_copy + rhs;
     return *this;
@@ -172,6 +208,8 @@ inline Sales_data& Sales_data::operator+=(const Sales_data &rhs)
 
 inline Sales_data& Sales_data::operator-=(const Sales_data &rhs)
 {
+    if (bookNo != rhs.bookNo)
+        throw isbn_mismatch("wrong isbns", bookNo, rhs.bookNo);
     Sales_data lhs_copy = *this;
     *this = lhs_copy - rhs;
     return *this;
@@ -193,7 +231,6 @@ void ret_Total()
     } else { std::cerr << "No data?!" << std::endl; }
 }
 
-// specialised hash function
 namespace std {
 template <> struct hash<Sales_data> {
     typedef size_t result_type;
@@ -205,8 +242,8 @@ template <> struct hash<Sales_data> {
 
 size_t hash<Sales_data>::operator()(const Sales_data &s) const {
     return hash<string>()(s.bookNo) ^
-    hash<size_t>()(s.units_sold) ^
-    hash<double>()(s.revenue);
+           hash<size_t>()(s.units_sold) ^
+           hash<double>()(s.revenue);
 }
 
 }
@@ -224,44 +261,53 @@ void printSet(const std::unordered_multiset<Sales_data> &sd_mset) {
 ```cpp
 #include "Sales_data.hpp"
 
+void handles(Sales_data &book1, Sales_data &book2, Sales_data sum) {
+    std::cout << "Attempting to add two different books.." << std::endl;
+    std::cout << "book1: " << book1.isbn() << "\n"
+              << "book2: " << book2.isbn() << "\n" <<std::endl;;
+    
+    try {
+        sum = book1 + book2;
+    } catch (const isbn_mismatch &e) {
+        std::cerr << e.what() << ":\nleft isbn(" << e.left_ << ")\nright isbn(" << e.right_ << ")" << std::endl;
+    }
+}
+
+void doesntHandle(Sales_data &book1, Sales_data &book2, Sales_data sum) {
+    std::cout << "Attempting to add two different books.." << std::endl;
+    std::cout << "book1: " << book1.isbn() << "\n"
+              << "book2: " << book2.isbn() << "\n" <<std::endl;;
+    
+    sum = book1 + book2;
+}
+
 int main()
 {
-    Sales_data test1 = { "123-456-789-A", 2, 30 };
-    Sales_data test2 = { "123-456-789-B", 2, 40 };
-    Sales_data test3 = { "123-456-789-C", 2, 30 };
+    Sales_data book1("123-456-789-X", 2, 10.00), book2("123-456-789-Y", 2, 10.00), sum;
     
-    std::unordered_multiset<Sales_data> sd_mset;
-    sd_mset.insert(test1);
-    sd_mset.insert(test2);
-    sd_mset.insert(test3);
+    handles(book1, book2, sum);
     
-    printSet(sd_mset);
-    
-    std::cout << "sd_mset.bucket_count():     " << sd_mset.bucket_count() << "\n";
-    std::cout << "sd_mset.max_bucket_count(): " << sd_mset.max_bucket_count() << "\n";
-    std::cout << "sd_mset.bucket_size():      " << sd_mset.bucket_size(5) << "\n";
-    std::cout << "sd_mset.bucket(test1):      " << sd_mset.bucket(test1) << "\n";
-    std::cout << "sd_mset.bucket(test2):      " << sd_mset.bucket(test2) << "\n";
-    std::cout << "sd_mset.bucket(test3):      " << sd_mset.bucket(test3) << "\n";
-    std::cout << "sd_mset.load_factor():      " << sd_mset.load_factor() << "\n";
-    std::cout << "sd_mset.max_load_factor():  " << sd_mset.max_load_factor() << std::endl;
+    doesntHandle(book1, book2, sum);
     
     return 0;
 }
 ```
 ```
 output:
-1: 123-456-789-A, 2, 30
-2: 123-456-789-C, 2, 30
-3: 123-456-789-B, 2, 40
+Attempting to add two different books..
+book1: 123-456-789-X
+book2: 123-456-789-Y
 
-sd_mset.bucket_count():     5
-sd_mset.max_bucket_count(): 329406144173384850
-sd_mset.bucket_size():      0
-sd_mset.bucket(test1):      4
-sd_mset.bucket(test2):      2
-sd_mset.bucket(test3):      4
-sd_mset.load_factor():      0.6
-sd_mset.max_load_factor():  1
-Program ended with exit code: 0
+wrong isbns:
+left isbn(123-456-789-X)
+right isbn(123-456-789-Y)
+
+Attempting to add two different books..
+book1: 123-456-789-X
+book2: 123-456-789-Y
+
+libc++abi: terminating with uncaught exception of type isbn_mismatch: wrong isbns
+terminating with uncaught exception of type isbn_mismatch: wrong isbns
+
+Program ended with exit code: 9
 ```
