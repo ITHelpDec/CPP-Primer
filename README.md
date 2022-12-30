@@ -1,313 +1,263 @@
 # C++ Primer – [![](https://tokei.ekzhang.com/b1/github/ITHelpDec/CPP-Primer?category=code&style=plastic)](https://github.com/ITHelpDec/CPP-Primer)
 My Journey Through C++ Primer 5th Edition
 
-.:. Most Noteworthy Recent Submission (28/12/2022) .:.
+.:. Most Noteworthy Recent Submission (30/12/2022) .:.
 
 ```cpp
-// Exercise 18.10:
+// Exercise 18.14:
 /*
- Write a program that uses the Sales_data addition operator on objects that have differing ISBNs.
- Write two versions of the program: one that handles the exception and one that does not.
- Compare the behavior of the programs so that you become familiar with what happens when an uncaught exception occurs.
+ Suppose we have the following declaration of the operator* that is
+ a member of the nested namespace mathLib::MatrixLib:
  
- >> line 89:  out_of_stock
- >> line 96:  isbn_mismatch
- >> line 118: opeartor+=
- >> line 130: opeartor-=
+ How would you declare this operator in global scope?
+ 
+ >> This is a great opportunity to benchmark loop interchanging
+ >> Surprisingly, there were no differences on my machine!
  
 */
+```
+>>> non_inter.hpp
+```cpp
+#ifndef non_inter_hpp
+#define non_inter_hpp
 
-#ifndef Sales_data_hpp
-#define Sales_data_hpp
-
-#include <iostream>
-#include <string>
-#include <functional>
-#include <unordered_set>
-#include <stdexcept>
-
-// forward declarations
-class out_of_stock;
-class isbn_mismatch;
-
-class Sales_data {
-    friend std::istream& operator>>(std::istream&, Sales_data&);
-    friend std::ostream& operator<<(std::ostream&, const Sales_data&);
-    
-    friend Sales_data operator+(const Sales_data&, const Sales_data&);
-    friend Sales_data operator-(const Sales_data&, const Sales_data&);
-    
-    friend bool operator<(const Sales_data&, const Sales_data&);
-    friend bool operator>(const Sales_data&, const Sales_data&);
-    friend bool operator<=(const Sales_data&, const Sales_data&);
-    friend bool operator>=(const Sales_data&, const Sales_data&);
-    
-    friend bool operator==(const Sales_data&, const Sales_data&);
-    friend bool operator!=(const Sales_data&, const Sales_data&);
-    
-    friend std::hash<Sales_data>;
-    
-    friend void printSet(const std::unordered_multiset<Sales_data>&);
-    
+namespace non_interloop {
+namespace mathLib {
+namespace MatrixLib {
+class matrix {
 public:
-    Sales_data() = default;
-    Sales_data(const std::string &s) : bookNo(s) { }
-    Sales_data(const std::string &bn, const std::size_t &us, const double &r)
-        : bookNo(bn), units_sold(us), revenue(r) { }
-    Sales_data(std::string &&bn, std::size_t &&us, double &&r)
-        : bookNo(std::move(bn)), units_sold(std::move(us)), revenue(std::move(r)) { }
+    matrix() = default;
     
-    Sales_data(const Sales_data &sd)
-        : bookNo(sd.bookNo), units_sold(sd.units_sold), revenue(sd.revenue) { }
+    matrix(std::size_t rows, std::size_t cols) {
+        matrix_.resize(rows, std::vector<int>(cols));
+    }
     
-    Sales_data& operator=(const Sales_data&);
+    void generate() {
+        for (auto &vec : matrix_)
+            std::generate(vec.begin(), vec.end(), [this] () { return gen(); } );
+    }
     
-    Sales_data(Sales_data &&sd) noexcept
-        : bookNo(std::move(sd.bookNo)),
-          units_sold(std::exchange(sd.units_sold, 0)),
-          revenue(std::exchange(sd.revenue, 0)) { }
+    const std::size_t size() const { return matrix_.size(); }
+    std::size_t size() { return matrix_.size(); }
     
-    Sales_data& operator=(Sales_data&&) noexcept;
+    std::vector<int>& operator[](std::size_t i) { return matrix_[i]; }
+    const std::vector<int>& operator[](std::size_t i) const { return matrix_[i]; }
     
-    Sales_data& operator+=(const Sales_data&);
-    Sales_data& operator-=(const Sales_data&);
-    
-    explicit operator std::string() const   { return bookNo; }
-    explicit operator double() const        { return revenue; }
-    
-    std::string isbn() const    { return bookNo; }
-    double avg_price() const    { return revenue / units_sold; }
-    
-    void swap(Sales_data&, Sales_data&);
+    void print() {
+        for (const auto &v : matrix_) {
+            for (const auto &e : v) {
+                std::cout << e << " ";
+            } std::cout << std::endl;
+        } std::cout << std::endl;
+    }
     
 private:
-    std::string bookNo;
-    std::size_t units_sold = 0;
-    double revenue = 0.0;
-};
-
-class out_of_stock : public std::runtime_error {
-public:
-    explicit out_of_stock(const std::string &s) : std::runtime_error(s) {  }
-};
-
-class isbn_mismatch : public std::logic_error {
-public:
-    explicit isbn_mismatch(const std::string &s) : std::logic_error(s) { }
+    std::vector<std::vector<int>> matrix_;
     
-    isbn_mismatch(const std::string &s, const std::string &lhs, const std::string &rhs)
-        : std::logic_error(s), left_(lhs), right_(rhs) { }
-    
-    const std::string left_, right_;
-};
-
-inline std::istream& operator>>(std::istream &is, Sales_data &in)
-{
-    double price = 0;
-    is >> in.bookNo >> in.units_sold >> price;
-    in.revenue = price * in.units_sold;
-    return is;
-}
-
-inline std::ostream& operator<<(std::ostream &os, const Sales_data &out)
-{
-    os << out.bookNo << " " << out.units_sold << " " << out.avg_price();
-    return os;
-}
-
-inline Sales_data operator+(const Sales_data &lhs, const Sales_data &rhs)
-{
-    // Sales_data sum;
-    // sum.units_sold = lhs.units_sold + rhs.units_sold;
-    // sum.revenue = lhs.revenue + rhs.revenue;
-    // return sum;
-    
-    Sales_data temp = lhs;
-    temp += rhs;
-    return temp;
-}
-
-inline Sales_data operator-(const Sales_data &lhs, const Sales_data &rhs)
-{
-    // Sales_data sum;
-    // sum.units_sold = lhs.units_sold - rhs.units_sold;
-    // sum.revenue = lhs.revenue - rhs.revenue;
-    // return sum;
-    
-    Sales_data temp = lhs;
-    temp -= rhs;
-    return temp;
-}
-
-inline bool operator==(const Sales_data &lhs, const Sales_data &rhs)
-{
-    return lhs.bookNo == rhs.bookNo &&
-           lhs.units_sold == rhs.units_sold &&
-           lhs.revenue == rhs.revenue;
-}
-
-inline bool operator!=(const Sales_data &lhs, const Sales_data &sd2)
-{
-    return !(lhs == sd2);
-}
-
-inline bool operator<(const Sales_data &lhs, const Sales_data &rhs)
-{
-    return lhs.avg_price() < rhs.avg_price();
-}
-
-inline bool operator>(const Sales_data &lhs, const Sales_data &rhs)
-{
-    return rhs < lhs;
-}
-
-inline bool operator<=(const Sales_data &lhs, const Sales_data &rhs)
-{
-    return !(rhs < lhs);
-}
-
-inline bool operator>=(const Sales_data &lhs, const Sales_data &rhs)
-{
-    return !(lhs < rhs);
-}
-
-inline void Sales_data::swap(Sales_data &lhs, Sales_data &rhs)
-{
-    using std::swap;
-    swap(lhs.bookNo, rhs.bookNo);
-    swap(lhs.units_sold, rhs.units_sold);
-    swap(lhs.revenue, rhs.revenue);
-}
-
-inline Sales_data& Sales_data::operator=(const Sales_data &rhs)
-{
-    bookNo = rhs.bookNo;
-    units_sold = rhs.units_sold;
-    revenue = rhs.revenue;
-    return *this;
-}
-
-inline Sales_data& Sales_data::operator=(Sales_data &&rhs) noexcept
-{
-    if (this != &rhs) {
-        bookNo = std::move(rhs.bookNo);
-        units_sold = std::exchange(rhs.units_sold, 0);
-        revenue = std::exchange(rhs.revenue, 0);
+    std::size_t gen() {
+        static std::default_random_engine e;
+        static std::uniform_int_distribution u(1, 9);
+        return u(e);
     }
-    return *this;
+};
+}
 }
 
-inline Sales_data& Sales_data::operator+=(const Sales_data &rhs)
-{
-    if (bookNo != rhs.bookNo)
-        throw isbn_mismatch("wrong isbns", bookNo, rhs.bookNo);
-    Sales_data lhs_copy = *this;
-    *this = lhs_copy + rhs;
-    return *this;
-}
+using mathLib::MatrixLib::matrix;
 
-inline Sales_data& Sales_data::operator-=(const Sales_data &rhs)
+matrix operator*(const matrix &lhs, const matrix &rhs)
 {
-    if (bookNo != rhs.bookNo)
-        throw isbn_mismatch("wrong isbns", bookNo, rhs.bookNo);
-    Sales_data lhs_copy = *this;
-    *this = lhs_copy - rhs;
-    return *this;
-}
-
-void ret_Total()
-{
-    Sales_data total;
-    if (std::cin >> total) {
-        Sales_data trans;
-        while(std::cin >> trans) {
-            if (total.isbn() == trans.isbn())
-                total + trans;
-            else {
-                std::cout << total << std::endl;
-                total = trans;
+    std::size_t n = lhs.size();
+    
+    matrix answer(n, n);
+    for (std::size_t i = 0; i != n; ++i) {
+        for (std::size_t j = 0; j != n; ++j) {
+            for (std::size_t k = 0; k != n; ++k) {
+                answer[i][j] += lhs[i][k] * rhs[k][j];
             }
-        } std::cout << total << std::endl;
-    } else { std::cerr << "No data?!" << std::endl; }
-}
-
-namespace std {
-template <> struct hash<Sales_data> {
-    typedef size_t result_type;
-    typedef Sales_data argument_type;
-    
-    size_t operator()(const Sales_data&) const;
-    
-};
-
-size_t hash<Sales_data>::operator()(const Sales_data &s) const {
-    return hash<string>()(s.bookNo) ^
-           hash<size_t>()(s.units_sold) ^
-           hash<double>()(s.revenue);
-}
-
-}
-
-void printSet(const std::unordered_multiset<Sales_data> &sd_mset) {
-    std::size_t count = 1;
-    for (const auto &book : sd_mset) {
-        std::cout << count << ": " << book.bookNo << ", " << book.units_sold << ", " << book.revenue << std::endl;
-        ++count;
-    } std::cout << std::endl;
-}
-
-#endif /* Sales_data_hpp */
-```
-```cpp
-#include "Sales_data.hpp"
-
-void handles(Sales_data &book1, Sales_data &book2, Sales_data sum) {
-    std::cout << "Attempting to add two different books.." << std::endl;
-    std::cout << "book1: " << book1.isbn() << "\n"
-              << "book2: " << book2.isbn() << "\n" <<std::endl;;
-    
-    try {
-        sum = book1 + book2;
-    } catch (const isbn_mismatch &e) {
-        std::cerr << e.what() << ":\nleft isbn(" << e.left_ << ")\nright isbn(" << e.right_ << ")" << std::endl;
+        }
     }
+    
+    return answer;
+}
 }
 
-void doesntHandle(Sales_data &book1, Sales_data &book2, Sales_data sum) {
-    std::cout << "Attempting to add two different books.." << std::endl;
-    std::cout << "book1: " << book1.isbn() << "\n"
-              << "book2: " << book2.isbn() << "\n" <<std::endl;;
+#endif /* non_inter_hpp */
+```
+>>> inter.hpp
+```cpp
+#ifndef inter_hpp
+#define inter_hpp
+
+namespace interloop {
+namespace mathLib {
+namespace MatrixLib {
+class matrix {
+public:
+    matrix() = default;
     
-    sum = book1 + book2;
+    matrix(std::size_t rows, std::size_t cols)
+    {
+        matrix_.resize(rows, std::vector<int>(cols));
+    }
+    
+    void generate()
+    {
+        for (auto &vec : matrix_) { std::generate(vec.begin(), vec.end(), [this] () { return gen(); } ); }
+    }
+    
+    const std::size_t size() const { return matrix_.size(); }
+    std::size_t size() { return matrix_.size(); }
+    
+    std::vector<int>& operator[](std::size_t i) { return matrix_[i]; }
+    const std::vector<int>& operator[](std::size_t i) const { return matrix_[i]; }
+    
+    void print() {
+        for (const auto &v : matrix_) {
+            for (const auto &e : v) {
+                std::cout << e << " ";
+            } std::cout << std::endl;
+        } std::cout << std::endl;
+    }
+    
+private:
+    std::vector<std::vector<int>> matrix_;
+    
+    std::size_t gen() {
+        static std::default_random_engine e;
+        static std::uniform_int_distribution u(1, 9);
+        return u(e);
+    }
+};
+}
+}
+
+using mathLib::MatrixLib::matrix;
+
+matrix operator*(const matrix &lhs, const matrix &rhs)
+{
+    std::size_t n = lhs.size();
+    
+    matrix answer(n, n);
+    for (std::size_t i = 0; i != n; ++i) {
+        for (std::size_t k = 0; k != n; ++k) {
+            for (std::size_t j = 0; j != n; ++j) {
+                answer[i][j] += lhs[i][k] * rhs[k][j];
+            }
+        }
+    }
+    
+    return answer;
+}
+}
+
+#endif /* inter_hpp */
+```
+>>> main.cpp
+```cpp
+#include <vector>
+#include <iostream>
+#include <random>
+
+#include "non_inter.hpp"
+#include "inter.hpp"
+
+#include <chrono>
+
+auto benchmark_non_inter(std::size_t n) {
+    auto t1 = std::chrono::high_resolution_clock::now();
+    auto t2 = std::chrono::high_resolution_clock::now();
+    
+    auto result = std::chrono::duration_cast<std::chrono::microseconds>(t2 - t1).count();
+    result -= result;
+    
+    for (std::size_t i = 0; i != n; ++i) {
+        t1 = std::chrono::high_resolution_clock::now();
+        non_interloop::matrix m1(5, 5), m2(5, 5);
+        m1.generate(); m2.generate();
+        non_interloop::matrix answer = non_interloop::operator*(m1, m2);
+        t2 = std::chrono::high_resolution_clock::now();
+        result += std::chrono::duration_cast<std::chrono::microseconds>(t2 - t1).count();
+        // answer.print();
+    }
+    
+    // std::cout << "Total time: " << result << " microseconds." << std::endl;
+    
+    return result;
+}
+
+auto benchmark_inter(std::size_t n) {
+    auto t1 = std::chrono::high_resolution_clock::now();
+    auto t2 = std::chrono::high_resolution_clock::now();
+    
+    auto result = std::chrono::duration_cast<std::chrono::microseconds>(t2 - t1).count();
+    result -= result;
+    
+    for (std::size_t i = 0; i != n; ++i) {
+        t1 = std::chrono::high_resolution_clock::now();
+        interloop::matrix m1(5, 5), m2(5, 5);
+        m1.generate(); m2.generate();
+        interloop::matrix answer = interloop::operator*(m1, m2);
+        t2 = std::chrono::high_resolution_clock::now();
+        result += std::chrono::duration_cast<std::chrono::microseconds>(t2 - t1).count();
+        // answer.print();
+    }
+    
+    // std::cout << "Total time: " << result << " microseconds." << std::endl;
+    
+    return result;
 }
 
 int main()
 {
-    Sales_data book1("123-456-789-X", 2, 10.00), book2("123-456-789-Y", 2, 10.00), sum;
+    std::cout << ".:. AVERAGES .:.\n\n";
     
-    handles(book1, book2, sum);
+    // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     
-    doesntHandle(book1, book2, sum);
+    std::cout << "no interlooping:...\n>>> ";
+    
+    auto average1 = 0;
+    for (int i = 0; i != 100; ++i) {
+        average1 += benchmark_non_inter(10000);
+        average1 >>= 1;
+        if (i == 50) { std::cout << "\n>>> "; }
+        if (!(i % 10)) { std::cout << average1 << "µs... "; }
+    }
+    
+    std::cout << "\naverage: " << average1 << "\n\n";
+    
+    // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+    
+    std::cout << "interlooping:...\n>>> ";
+    
+    auto average2 = 0;
+    for (int i = 0; i != 100; ++i) {
+        average2 += benchmark_inter(10000);
+        average2 >>= 1;
+        if (i == 50) { std::cout << "\n>>> "; }
+        if (!(i % 10)) { std::cout << average2 << "µs... "; }
+    }
+    
+    std::cout << "\naverage: " << average2 << "\n" << std::endl;
+    
+    // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     
     return 0;
 }
 ```
 ```
 output:
-Attempting to add two different books..
-book1: 123-456-789-X
-book2: 123-456-789-Y
+.:. AVERAGES .:.
 
-wrong isbns:
-left isbn(123-456-789-X)
-right isbn(123-456-789-Y)
+no interlooping:...
+>>> 10390µs... 21447µs... 21567µs... 20384µs... 20413µs... 
+>>> 20638µs... 20762µs... 20448µs... 20762µs... 20626µs... 
+average: 20486
 
-Attempting to add two different books..
-book1: 123-456-789-X
-book2: 123-456-789-Y
+interlooping:...
+>>> 12556µs... 22281µs... 22365µs... 20346µs... 21251µs... 
+>>> 20562µs... 21016µs... 22811µs... 20970µs... 21574µs... 
+average: 20603
 
-libc++abi: terminating with uncaught exception of type isbn_mismatch: wrong isbns
-terminating with uncaught exception of type isbn_mismatch: wrong isbns
-
-Program ended with exit code: 9
+Program ended with exit code: 0
 ```
