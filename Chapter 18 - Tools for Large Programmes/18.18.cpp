@@ -1,4 +1,4 @@
-// Exercise 18.16:
+// Exercise 18.18:
 /*
  Given the following typical definition of swap § 13.3 (p. 517), determine which version of swap is used if mem1 is a string.
  What if mem1 is an int?
