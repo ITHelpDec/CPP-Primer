@@ -14,9 +14,9 @@ void compute(const void *) { std::cout << "primerLib::compute(const void*)" << s
 
 // using primerLib::compute;
 
-void compute(int) { std::cout << "primerLib::compute::compute(int)" << std::endl; }
-void compute(double, double = 3.4) { std::cout << "primerLib::compute::compute(double, double = 3.4)" << std::endl; }
-void compute(char*, char* = 0) { std::cout << "primerLib::compute::compute(char*, char* = 0)" << std::endl; }
+void compute(int) { std::cout << "compute(int)" << std::endl; }
+void compute(double, double = 3.4) { std::cout << "compute(double, double = 3.4)" << std::endl; }
+void compute(char*, char* = 0) { std::cout << "compute(char*, char* = 0)" << std::endl; }
 
 void f() { compute("manbearpig"); }
 
@@ -30,8 +30,8 @@ int main()
     
     // void f() { compute(0); }
     // should still call (int) overload...which, again, it does
-    // primerLib::compute::compute(int)
-    
+    // compute(int)
+
     // void f() { compute(); }
     // error: "No matching function for call to 'compute'"
     // would need to explicitly call namespace
@@ -39,13 +39,13 @@ int main()
     // primerLib::compute()
     
     // void f() { compute('c', 0); }
-    // primerLib::compute::compute(double, double = 3.4)
-    
+    // compute(double, double = 3.4)
+
     // void f() { compute("woof", 0); }
-    // primerLib::compute::compute(char*, char* = 0)
-    
+    // compute(char*, char* = 0)
+
     // void f() { compute("manbearpig"); }
-    // primerLib::compute::compute(char*, char* = 0)
+    // compute(char*, char* = 0)
     // no longer primerLib::compute(const void*)
     
     return 0;
