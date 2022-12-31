@@ -3,18 +3,28 @@ My Journey Through C++ Primer 5th Edition
 
 .:. Most Noteworthy Recent Submission (30/12/2022) .:.
 
+```
+Exercise 18.14:
+Suppose we have the following declaration of the operator* that is
+a member of the nested namespace mathLib::MatrixLib:
+```
 ```cpp
-// Exercise 18.14:
-/*
- Suppose we have the following declaration of the operator* that is
- a member of the nested namespace mathLib::MatrixLib:
- 
- How would you declare this operator in global scope?
- 
- >> This is a great opportunity to benchmark loop interchanging
- >> Surprisingly, there were no differences on my machine!
- 
-*/
+namespace mathLib {
+    namespace MatrixLib {
+        class matrix { /* ... */ }
+        matrix operator*(const matrix&, const matrix&);
+        // ...
+    }
+}
+```
+```
+How would you declare this operator in global scope?
+
+>> This is a great opportunity to benchmark loop interchanging
+>> Surprisingly, there were no differences on my machine!
+
+Correction: on a 120x120 matrix, the improvement was nearly 2x
+            on a 1200x1200 matrix, the improvement was 27x faster!!!
 ```
 >>> non_inter.hpp
 ```cpp
