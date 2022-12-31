@@ -65,3 +65,14 @@ int main()
     
     return 0;
 }
+
+// output:
+// Brace yourselves...creating an MI object...
+// ::A()
+// A::B()
+// A::B::C()
+// ::X()
+// ::Y()
+// (::X | ::Y)::Z()
+// (::C | ::Z)::MI()
+// Program ended with exit code: 0
