@@ -47,8 +47,8 @@ public:
             std::generate(vec.begin(), vec.end(), [this] () { return gen(); } );
     }
     
-    const std::size_t size() const { return matrix_.size(); }
     std::size_t size() { return matrix_.size(); }
+    const std::size_t size() const { return matrix_.size(); }
     
     std::vector<int>& operator[](std::size_t i) { return matrix_[i]; }
     const std::vector<int>& operator[](std::size_t i) const { return matrix_[i]; }
