@@ -8,6 +8,9 @@
  >> This is a great opportunity to benchmark loop interchanging
  >> Surprisingly, there were no differences on my machine!
  
+ Correction: on a 120x120 matrix, the improvement was nearly 2x
+             on a 1200x1200 matrix, the improvement was 27x faster!!!
+ 
 */
 
 #ifndef non_inter_hpp
