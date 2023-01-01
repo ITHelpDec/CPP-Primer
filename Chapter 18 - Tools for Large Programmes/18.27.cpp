@@ -1,4 +1,4 @@
-// Exercise 18.26:
+// Exercise 18.27:
 /*
  Given the class hierarchy in the box on page 810 and assuming we add a function named foo to MI as follows:
 */
