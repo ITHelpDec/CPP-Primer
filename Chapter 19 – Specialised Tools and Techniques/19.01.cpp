@@ -83,3 +83,29 @@ int main()
     
     return 0;
 }
+
+// output:
+
+// ip: 0x100016080 (8 bytes)
+// value: 0x100016080
+
+// Element successfully allocated.
+// ip: 0x600000008000 (8 bytes)
+// value: 69
+
+// Element memory freed.
+// ip: 0x600000008000 (8 bytes)
+// value: -559054848
+
+// ap: 0x100014510 (8 bytes)
+// value: 0, 0, 0
+
+// Array successfully allocated.
+// ap: 0x600000c08000 (8 bytes)
+// value: 0, 0, 0
+
+// Array memory freed.
+// ap: 0x600000c08000 (8 bytes)
+// value: -563249152, 48813, 0
+
+// Program ended with exit code: 0
