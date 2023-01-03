@@ -1,43 +1,161 @@
 // Exercise 19.01:
 /*
  Write your own operator new(size_t) function using malloc and use free to write the operator delete(void*) function.
+ 
+ EDIT: kudos to "Undefined Behaviour as Gaeilge" for the help with prompts and amendments with regards to C++17
 */
 
 #include <iostream>
 #include <cstdio>
-#include <stdexcept>
+// #include <stdexcept>
+#include <new>
 
-// allocate an object
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+// C++11 versions  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+// allocate an element
 void *operator new(std::size_t size) {
     if (void *mem = std::malloc(size)) {
-        std::cout << "Element successfully allocated." << std::endl;
+        std::cout << "void *operator new(std::size_t)" << std::endl;
         return mem;
-    }
-    else
+    } else {
         throw std::bad_alloc();
+    }
 }
 
 // allocates an array
 void *operator new[](std::size_t size) {
-    if (void *mem = (void*)std::malloc(size * sizeof(void*))) {
-        std::cout << "Array successfully allocated." << std::endl;
+    // if (void *mem = (int*)std::malloc(size * sizeof(int))) {
+    if (void *mem = std::malloc(size)) {
+        std::cout << "void *operator new[](std::size_t)" << std::endl;
         return mem;
-    }
-    else
+    } else {
         throw std::bad_alloc();
+    }
 }
 
 // frees an element
 void operator delete(void *mem) noexcept {
-    std::cout << "Element memory freed." << std::endl;
+    std::cout << "void operator delete(void*) noexcept" << std::endl;
     std::free(mem);
 }
 
 // frees an array
 void operator delete[](void *mem) noexcept {
-    std::cout << "Array memory freed." << std::endl;
+    std::cout << "void operator delete[](void*) noexcept" << std::endl;
     std::free(mem);
 }
+
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+// C++11 versions with std::nothrow_t& - - - - - - - - - - - - - - - - - - - -
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+// allocate an element
+void *operator new(std::size_t size, std::nothrow_t &tag) noexcept {
+    if (void *mem = std::malloc(size)) {
+        std::cout << "void *operator new(std::size_t, std::nothrow_t&) noexcept" << std::endl;
+        return mem;
+    } else {
+        return nullptr;
+    }
+}
+
+// allocates an array
+void *operator new[](std::size_t size, std::nothrow_t &tag) noexcept {
+    if (void *mem = std::malloc(size)) {
+        std::cout << "void *operator new[](std::size_t, std::nothrow_t&) noexcept" << std::endl;
+        return mem;
+    } else {
+        return nullptr;
+    }
+}
+
+// frees an element
+void operator delete(void *mem, std::nothrow_t &tag) noexcept {
+    std::cout << "void operator delete(void*, std::nothrow_t&) noexcept" << std::endl;
+    std::free(mem);
+}
+
+// frees an array
+void operator delete[](void *mem, std::nothrow_t &tag) noexcept {
+    std::cout << "void operator delete[](void*, std::nothrow_t&) noexcept" << std::endl;
+    std::free(mem);
+}
+
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+// C++17 versions  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+// allocate an element
+void *operator new(std::size_t size, std::align_val_t al) {
+    if (void *mem = std::aligned_alloc(static_cast<std::size_t>(al), size)) {
+        std::cout << "void *operator new(std::size_t, std::align_val_t)" << std::endl;
+        return mem;
+    } else {
+        throw std::bad_alloc();
+    }
+}
+
+// allocates an array
+void *operator new[](std::size_t size, std::align_val_t al) {
+    if (void *mem = std::aligned_alloc(static_cast<std::size_t>(al), size)) {
+        std::cout << "void *operator new[](std::size_t, std::align_val_t)" << std::endl;
+        return mem;
+    } else {
+        throw std::bad_alloc();
+    }
+}
+
+// frees an element
+void operator delete(void *mem, std::align_val_t al) noexcept {
+    std::cout << "void operator delete(void*, std::align_val_t) noexcept" << std::endl;
+    std::free(mem);
+}
+
+// frees an array
+void operator delete[](void *mem, std::align_val_t al) noexcept {
+    std::cout << "void operator delete[](void*, std::align_val_t) noexcept" << std::endl;
+    std::free(mem);
+}
+
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+// C++17 versions with std::no_throwt& - - - - - - - - - - - - - - - - - - - -
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+// allocate an element
+void *operator new(std::size_t size, std::align_val_t al, std::nothrow_t &tag) noexcept {
+    if (void *mem = std::aligned_alloc(static_cast<std::size_t>(al), size)) {
+        std::cout << "void *operator new(std::size_t, std::align_val_t, std::nothrow_t&) noexcept" << std::endl;
+        return mem;
+    } else {
+        return nullptr;
+    }
+}
+
+// allocates an array
+void *operator new[](std::size_t size, std::align_val_t al, std::nothrow_t &tag) noexcept {
+    if (void *mem = std::aligned_alloc(static_cast<std::size_t>(al), size)) {
+        std::cout << "void *operator new[](std::size_t, std::align_val_t, std::nothrow_t&) noexcept" << std::endl;
+        return mem;
+    } else {
+        return nullptr;
+    }
+}
+
+// frees an element
+void operator delete(void *mem, std::align_val_t al, std::nothrow_t &tag) noexcept {
+    std::cout << "void operator delete(void*, std::align_val_t, std::nothrow_t&) noexcept" << std::endl;
+    std::free(mem);
+}
+
+// frees an array
+void operator delete[](void *mem, std::align_val_t al, std::nothrow_t &tag) noexcept {
+    std::cout << "void operator delete[](void*, std::align_val_t, std::nothrow_t&) noexcept" << std::endl;
+    std::free(mem);
+}
+
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 int main()
 {
@@ -83,29 +201,3 @@ int main()
     
     return 0;
 }
-
-// output:
-
-// ip: 0x100016080 (8 bytes)
-// value: 0x100016080
-
-// Element successfully allocated.
-// ip: 0x600000008000 (8 bytes)
-// value: 69
-
-// Element memory freed.
-// ip: 0x600000008000 (8 bytes)
-// value: -559054848
-
-// ap: 0x100014510 (8 bytes)
-// value: 0, 0, 0
-
-// Array successfully allocated.
-// ap: 0x600000c08000 (8 bytes)
-// value: 0, 0, 0
-
-// Array memory freed.
-// ap: 0x600000c08000 (8 bytes)
-// value: -563249152, 48813, 0
-
-// Program ended with exit code: 0
