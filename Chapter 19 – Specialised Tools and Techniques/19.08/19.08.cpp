@@ -61,3 +61,9 @@ int main()
     
     return 0;
 }
+
+// output:
+// std::bad_typeid: looks like a std::bad_typeid to me (nullptr)
+// sorry – not an AndQuery! it's a 5Query
+// sorry – not an AndQuery! it's a 5Query
+// Program ended with exit code: 0
