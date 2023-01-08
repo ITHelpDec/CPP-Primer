@@ -27,7 +27,7 @@ int main()
     // if we use the template from pg. 839 as a reference...
     // using Action = char (Screen::*)(Screen::pos, Screen::pos) const;
     // Action get = &Screen::get;
-    // Screen& action(Screen&, Action1 = &Screen::get);
+    // Screen& action(Screen&, Action = &Screen::get);
     
     // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     
