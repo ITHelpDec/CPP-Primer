@@ -1,7 +1,10 @@
 # C++ Primer – [![](https://tokei.ekzhang.com/b1/github/ITHelpDec/CPP-Primer?category=code&style=plastic)](https://github.com/ITHelpDec/CPP-Primer)
-My Journey Through C++ Primer 5th Edition
+## My Journey Through C++ Primer 5th Edition
+### If you've found anything from this repo useful, please consider contributing towards the only thing that makes it all possible – my unhealthy relationship with 90+ SCA score coffee beans.
 
-.:. Most Noteworthy Recent Submission (30/12/2022) .:.
+<a href="https://www.buymeacoffee.com/ITHelpDec"><img src="https://img.buymeacoffee.com/button-api/?text=Buy me a coffee&emoji=&slug=ITHelpDec&button_colour=FFDD00&font_colour=000000&font_family=Cookie&outline_colour=000000&coffee_colour=ffffff" /></a>
+
+## .:. Most Noteworthy Recent Submission (30/12/2022) .:.
 
 ```
 Exercise 18.14:
